@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Runner simples – HTML + CSS + JS puro</title>
+  <title>Runner – Reais & Loja (HTML + CSS + JS)</title>
   <style>
     :root {
       --bg: #0f172a;        /* slate-900 */
@@ -12,6 +12,8 @@
       --accent-2: #a78bfa;  /* violet-400 */
       --text: #e5e7eb;      /* gray-200 */
       --danger: #f87171;    /* red-400 */
+      --ok: #34d399;        /* green-400 */
+      --amber: #f59e0b;     /* amber-500 */
     }
     * { box-sizing: border-box; }
     body {
@@ -20,64 +22,41 @@
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
       color: var(--text);
       background: radial-gradient(60rem 60rem at 70% -10%, #1f2937 20%, var(--bg) 60%);
-      display: grid;
-      place-items: center;
-      padding: 16px;
+      display: grid; place-items: center; padding: 16px;
     }
     .card {
       width: min(960px, 100%);
       background: linear-gradient(180deg, #0b1022, #0a0f1e);
-      border: 1px solid #1f2937;
-      border-radius: 16px;
-      box-shadow: 0 10px 30px rgba(0,0,0,.35);
+      border: 1px solid #1f2937; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,.35);
       overflow: hidden;
     }
-    header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 14px 16px; border-bottom: 1px solid #1f2937;
-      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,0));
-    }
-    header h1 { font-size: clamp(16px, 2.5vw, 20px); margin: 0; font-weight: 700; letter-spacing: .2px; }
+    header { display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border-bottom:1px solid #1f2937; background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,0)); }
+    header h1 { font-size: clamp(16px, 2.5vw, 20px); margin:0; font-weight:700; letter-spacing:.2px; }
     header .controls { font-size: 14px; opacity: .9; }
     header kbd { background:#111827; padding:2px 6px; border-radius:6px; border:1px solid #374151; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
 
-    /* Canvas wrapper keeps aspect-ratio and responsive layout */
-    .stage-wrap {
-      position: relative;
-      width: 100%;
-      aspect-ratio: 16 / 9;
-      background: linear-gradient(180deg, #0b1022 60%, #0a0f1e 60%);
-      display: grid; place-items: center;
-    }
+    .stage-wrap { position: relative; width: 100%; aspect-ratio: 16 / 9; background: linear-gradient(180deg, #0b1022 60%, #0a0f1e 60%); display: grid; place-items: center; }
     canvas { width: 100%; height: 100%; display: block; }
 
-    .hud {
-      position: absolute; inset: 0; pointer-events: none; padding: 10px 12px;
-      display: flex; justify-content: space-between; align-items: flex-start;
-      font-weight: 600; text-shadow: 0 2px 8px rgba(0,0,0,.6);
-    }
-    .chip {
-      background: rgba(34,211,238,.12);
-      border: 1px solid rgba(34,211,238,.35);
-      border-radius: 999px; padding: 6px 10px; margin-right: 6px;
-    }
-    .right .chip { background: rgba(167,139,250,.12); border-color: rgba(167,139,250,.35); }
+    .hud { position:absolute; inset:0; pointer-events:none; padding:10px 12px; display:flex; justify-content:space-between; align-items:flex-start; font-weight:600; text-shadow:0 2px 8px rgba(0,0,0,.6); gap:8px; }
+    .left, .right { display:flex; gap:8px; flex-wrap:wrap; }
+    .chip { background: rgba(34,211,238,.12); border: 1px solid rgba(34,211,238,.35); border-radius: 999px; padding: 6px 10px; }
+    .chip.ok { background: rgba(52,211,153,.12); border-color: rgba(52,211,153,.35); }
+    .chip.amb { background: rgba(245,158,11,.12); border-color: rgba(245,158,11,.35); }
+    .chip.vio { background: rgba(167,139,250,.12); border-color: rgba(167,139,250,.35); }
 
     .overlay { position:absolute; inset:0; display:grid; place-items:center; }
-    .panel {
-      background: rgba(17,24,39,.8); backdrop-filter: blur(6px);
-      border:1px solid #374151; border-radius:14px; padding:18px 20px; text-align:center;
-      max-width: 90%;
-    }
+    .panel { background: rgba(17,24,39,.85); backdrop-filter: blur(6px); border:1px solid #374151; border-radius:14px; padding:18px 20px; text-align:center; max-width: 90%; }
     .title { font-size: clamp(18px, 4vw, 24px); margin: 0 0 6px; }
-    .subtitle { font-size: clamp(14px, 3vw, 16px); margin: 0 0 10px; opacity:.9; }
-    .btn {
-      display:inline-block; margin-top:10px; padding:10px 16px; border-radius:999px;
-      background: linear-gradient(90deg, var(--accent), var(--accent-2));
-      color:#061024; font-weight: 800; letter-spacing:.3px; border: none; cursor: pointer;
-      box-shadow: 0 8px 20px rgba(34,211,238,.25);
-    }
+    .subtitle { font-size: clamp(14px, 3vw, 16px); margin: 0 10px 10px; opacity:.9; }
+    .btn { display:inline-block; margin-top:10px; padding:10px 16px; border-radius:999px; background: linear-gradient(90deg, var(--accent), var(--accent-2)); color:#061024; font-weight: 800; letter-spacing:.3px; border: none; cursor: pointer; box-shadow: 0 8px 20px rgba(34,211,238,.25); }
     .btn:active { transform: translateY(1px); }
+
+    .shop { display:grid; gap:8px; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); margin-top:10px; }
+    .item { border:1px solid #374151; border-radius:12px; padding:12px; background: rgba(255,255,255,.02); text-align:left; }
+    .item h3 { margin:0 0 6px; font-size:16px; }
+    .item p { margin:0; font-size:13px; opacity:.9; }
+    .item .price { font-weight:800; color:var(--ok); margin-top:6px; }
 
     .mobile-tip { position:absolute; bottom:8px; left:0; right:0; text-align:center; font-size:12px; opacity:.7; }
   </style>
@@ -85,23 +64,30 @@
 <body>
   <div class="card" id="app">
     <header>
-      <h1>Runner simples – JS puro</h1>
+      <h1>Runner – Reais & Loja</h1>
       <div class="controls">
         <span class="chip">Pular: <kbd>Espaço</kbd> / <kbd>↑</kbd> / toque</span>
-        <span class="chip">Reiniciar: <kbd>R</kbd> / clique</span>
+        <span class="chip">Reiniciar: <kbd>R</kbd></span>
+        <span class="chip">Loja: <kbd>L</kbd></span>
       </div>
     </header>
 
     <div class="stage-wrap" id="wrap">
       <canvas id="game" width="960" height="540" aria-label="Jogo runner"></canvas>
       <div class="hud">
-        <div class="left"><span class="chip" id="score">Pontos: 0</span></div>
-        <div class="right"><span class="chip" id="speed">Velocidade: 1.0x</span></div>
+        <div class="left">
+          <span class="chip" id="score">Pontos: 0</span>
+          <span class="chip ok" id="reais">Reais: 0</span>
+          <span class="chip amb" id="lives">Vidas: 1</span>
+        </div>
+        <div class="right">
+          <span class="chip vio" id="speed">Velocidade: 1.0x</span>
+        </div>
       </div>
       <div class="overlay" id="overlay">
-        <div class="panel">
-          <p class="title">Pronto para correr?</p>
-          <p class="subtitle">Evite os obstáculos. Chegue o mais longe possível.</p>
+        <div class="panel" id="panel">
+          <p class="title" id="ovTitle">Pronto para correr?</p>
+          <p class="subtitle" id="ovText">Ganhe <b>1 real</b> a cada <b>500 pontos</b>. Junte <b>25 reais</b> em uma única corrida para trocar por <b>vidas</b> ou <b>itens</b> na <b>Loja</b>.</p>
           <button class="btn" id="startBtn">Começar</button>
           <div class="mobile-tip">Toque na tela para pular</div>
         </div>
@@ -110,114 +96,164 @@
   </div>
 
   <script>
+    // ===== Guard-rails de debug =====
+    function showOverlayError(msg) {
+      const overlay = document.getElementById('overlay');
+      overlay.style.display = 'grid';
+      const title = document.getElementById('ovTitle');
+      const subtitle = document.getElementById('ovText');
+      const btn = document.getElementById('startBtn');
+      title.textContent = 'Erro no jogo';
+      subtitle.innerHTML = msg;
+      btn.textContent = 'Tentar novamente';
+    }
+    window.addEventListener('error', (e) => { showOverlayError(e.message || 'Erro desconhecido'); });
+    window.addEventListener('unhandledrejection', (e) => { showOverlayError((e.reason && e.reason.message) || 'Falha de promessa não tratada'); });
+  </script>
+
+  <script>
     (() => {
       const canvas = document.getElementById('game');
       const ctx = canvas.getContext('2d');
       const overlay = document.getElementById('overlay');
       const startBtn = document.getElementById('startBtn');
       const scoreEl = document.getElementById('score');
+      const reaisEl = document.getElementById('reais');
       const speedEl = document.getElementById('speed');
+      const livesEl = document.getElementById('lives');
       const wrap = document.getElementById('wrap');
+      const panel = document.getElementById('panel');
+      const ovTitle = document.getElementById('ovTitle');
+      const ovText = document.getElementById('ovText');
 
-      // Handle HiDPI rendering
+      // === Sprite config (opcional) ===
+      const SPRITE_URL = 'player.png';
+      const SPRITE_COLS = 6;      // nº de quadros na folha horizontal
+      const SPRITE_FPS  = 10;     // velocidade da animação de corrida
+      const spriteImg = new Image(); spriteImg.src = SPRITE_URL;
+
+      // HiDPI
       function resizeCanvasToDisplaySize() {
         const dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
         const { clientWidth: cw, clientHeight: ch } = canvas;
+        if (cw === 0 || ch === 0) return;
         if (canvas.width !== cw * dpr || canvas.height !== ch * dpr) {
-          canvas.width = cw * dpr;
-          canvas.height = ch * dpr;
+          canvas.width = cw * dpr; canvas.height = ch * dpr;
         }
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0); // scale drawing ops
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       }
-
       new ResizeObserver(resizeCanvasToDisplaySize).observe(wrap);
       resizeCanvasToDisplaySize();
 
-      // Game state
-      let running = false;
-      let gameOver = false;
-      let tPrev = 0;
-      let score = 0;
-      let speed = 1.0;      // multiplier grows gradually
-      let spawnTimer = 0;   // time since last obstacle
+      // ============ Estado do jogo ============
+      let running = false, gameOver = false;
+      let tPrev = 0, score = 0, speed = 1.0, spawnTimer = 0;
+      let reais = 0, nextRealAt = 500; // 1 real a cada 500 pontos
+      let lives = 1;                   // começa difícil: 1 vida
+      let inventory = { garrafa:false, latinhas:0, docinhos:0 };
+      let redeemedCount = 0;           // quantas trocas já feitas nessa corrida
 
       const GROUND_Y = () => canvas.height / (window.devicePixelRatio || 1) * 0.8;
 
       // Player
       const player = {
-        x: 80,
-        y: 0,
-        w: 36,
-        h: 42,
-        vy: 0,
-        onGround: true,
-        jumpForce: 11.2,
-        gravity: 28,
-        colorA: '#22d3ee',
-        colorB: '#a78bfa'
+        x: 80, y: 0, w: 36, h: 42, vy: 0, onGround: true,
+        jumpForce: 11.6, gravity: 30,
+        colorA: '#22d3ee', colorB: '#a78bfa',
+        spriteReady:false, frame:0, frameTimer:0, frameW:0, frameH:0
       };
 
-      function reset() {
-        running = false;
-        gameOver = false;
-        score = 0; speed = 1.0; spawnTimer = 0; tPrev = 0;
-        player.y = GROUND_Y() - player.h;
-        player.vy = 0; player.onGround = true;
-        obstacles.length = 0;
-        overlay.style.display = 'grid';
-        updateHUD();
-        draw();
-      }
-
-      // Obstacles
+      // Obstáculos
       const obstacles = [];
       function spawnObstacle() {
-        const baseH = 24 + Math.random() * 38; // 24–62
-        const w = 18 + Math.random() * 14;     // 18–32
-        const gapVariant = Math.random();
-        const y = GROUND_Y() - baseH;
-        const kind = gapVariant > 0.8 ? 'tall' : 'box';
-        obstacles.push({ x: canvas.width / (window.devicePixelRatio || 1) + 20, y, w, h: baseH, kind });
-      }
+        const typeRand = Math.random();
+        const baseH = 22 + Math.random() * 42; // 22–64
+        const w = 18 + Math.random() * 16;     // 18–34
+        const groundY = GROUND_Y();
 
-      function jump() {
-        if (player.onGround && running && !gameOver) {
-          player.vy = -player.jumpForce;
-          player.onGround = false;
-        } else if (!running && !gameOver) {
-          start();
-        } else if (gameOver) {
-          reset();
+        if (typeRand < Math.min(0.25 + speed*0.03, 0.6)) {
+          // obstáculo aéreo (força timing do pulo)
+          const h = 18 + Math.random() * 20;
+          const y = groundY - (player.h + 24 + Math.random()*22); // voando
+          obstacles.push({ x: canvas.width/(window.devicePixelRatio||1) + 20, y, w, h, kind:'fly' });
+        } else if (typeRand < Math.min(0.50 + speed*0.05, 0.85)) {
+          // pares próximos (gap curto)
+          const h1 = baseH;
+          const h2 = 18 + Math.random()*26;
+          const xStart = canvas.width/(window.devicePixelRatio||1) + 20;
+          obstacles.push({ x:xStart, y: groundY - h1, w, h: h1, kind:'box' });
+          obstacles.push({ x:xStart + 46 + Math.random()*26, y: groundY - h2, w, h: h2, kind:'box' });
+        } else {
+          // único padrão
+          const y = groundY - baseH; const kind = Math.random()>0.8 ? 'tall' : 'box';
+          obstacles.push({ x: canvas.width/(window.devicePixelRatio||1) + 20, y, w, h: baseH, kind });
         }
       }
 
-      function start() {
-        if (running) return;
-        overlay.style.display = 'none';
-        running = true;
-        requestAnimationFrame(loop);
+      function openShop() {
+        overlay.style.display = 'grid';
+        ovTitle.textContent = 'Loja';
+        ovText.innerHTML = `Você tem <b>${reais} ${reais===1?'real':'reais'}</b>. Cada item custa <b>25 reais</b>.`;
+        panel.querySelectorAll('.shop, .btn.shop-close').forEach(n=>n.remove());
+        const shop = document.createElement('div'); shop.className='shop';
+        const items = [
+          { id:'vidas', title:'+2 vidas', desc:'Sobreviva por mais tempo nesta corrida.', action:()=>{ if (reais>=25){ reais-=25; lives+=2; redeemedCount++; closeShop(); } } },
+          { id:'garrafa', title:'Garrafa 600ml', desc:'Colecionável cosmético.', action:()=>{ if (reais>=25){ reais-=25; inventory.garrafa=true; redeemedCount++; closeShop(); } } },
+          { id:'latinhas', title:'2 latinhas', desc:'Colecionável cosmético.', action:()=>{ if (reais>=25){ reais-=25; inventory.latinhas+=2; redeemedCount++; closeShop(); } } },
+          { id:'docinhos', title:'4 docinhos', desc:'Colecionável cosmético.', action:()=>{ if (reais>=25){ reais-=25; inventory.docinhos+=4; redeemedCount++; closeShop(); } } },
+        ];
+        for (const it of items) {
+          const div = document.createElement('div'); div.className='item';
+          div.innerHTML = `<h3>${it.title}</h3><p>${it.desc}</p><div class="price">25 reais</div>`;
+          div.style.cursor='pointer';
+          div.addEventListener('click', ()=>{ it.action(); updateHUD(); });
+          shop.appendChild(div);
+        }
+        panel.appendChild(shop);
+        const close = document.createElement('button'); close.className='btn shop-close'; close.textContent='Fechar (voltar ao jogo)';
+        close.addEventListener('click', ()=>{ closeShop(); });
+        panel.appendChild(close);
+      }
+      function closeShop(){ overlay.style.display='none'; if (!gameOver){ running=true; requestAnimationFrame(loop); }}
+
+      function reset() {
+        running = false; gameOver = false; tPrev = 0;
+        score = 0; speed = 1.0; spawnTimer = 0; reais = 0; nextRealAt = 500; lives = 1; redeemedCount = 0;
+        inventory = { garrafa:false, latinhas:0, docinhos:0 };
+        player.y = GROUND_Y() - player.h; player.vy = 0; player.onGround = true; player.frame = 0; player.frameTimer = 0;
+        obstacles.length = 0;
+        overlay.style.display = 'grid'; ovTitle.textContent='Pronto para correr?';
+        ovText.innerHTML = 'Ganhe <b>1 real</b> a cada <b>500 pontos</b>. Junte <b>25 reais</b> em uma única corrida para trocar por <b>vidas</b> ou <b>itens</b> na <b>Loja</b>.';
+        startBtn.textContent = 'Começar'; updateHUD(); draw();
       }
 
+      function jump() {
+        if (player.onGround && running && !gameOver) { player.vy = -player.jumpForce; player.onGround = false; }
+        else if (!running && !gameOver) { start(); }
+        else if (gameOver) { reset(); }
+      }
+
+      function start() { if (running) return; overlay.style.display='none'; running = true; requestAnimationFrame(loop); }
+
       function endGame() {
-        running = false; gameOver = true;
-        overlay.style.display = 'grid';
-        overlay.querySelector('.title').textContent = 'Fim de jogo';
-        overlay.querySelector('.subtitle').textContent = `Você marcou ${Math.floor(score)} pontos.`;
+        running = false; gameOver = true; overlay.style.display = 'grid';
+        ovTitle.textContent = 'Fim de jogo';
+        ovText.innerHTML = `Você marcou <b>${Math.floor(score)}</b> pontos, juntou <b>${reais} ${reais===1?'real':'reais'}</b> e fez <b>${redeemedCount}</b> troca(s).`;
         startBtn.textContent = 'Jogar novamente';
       }
 
       function updateHUD() {
         scoreEl.textContent = `Pontos: ${Math.floor(score)}`;
+        reaisEl.textContent = `Reais: ${reais}`;
         speedEl.textContent = `Velocidade: ${speed.toFixed(1)}x`;
+        livesEl.textContent = `Vidas: ${lives}`;
       }
 
       // Input
       window.addEventListener('keydown', (e) => {
-        if (e.code === 'Space' || e.code === 'ArrowUp') {
-          e.preventDefault(); jump();
-        } else if (e.key.toLowerCase() === 'r') {
-          reset();
-        }
+        if (e.code === 'Space' || e.code === 'ArrowUp') { e.preventDefault(); jump(); }
+        else if (e.key.toLowerCase() === 'r') { reset(); }
+        else if (e.key.toLowerCase() === 'l') { if (!gameOver) { running=false; openShop(); } }
       });
       canvas.addEventListener('pointerdown', jump);
       startBtn.addEventListener('click', () => (gameOver ? reset() : start()));
@@ -225,43 +261,56 @@
       // Utils
       function rectsOverlap(a,b){ return a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y; }
 
+      // ===== Loop principal =====
       function loop(tNow) {
         if (!running) return;
         if (!tPrev) tPrev = tNow;
-        const dt = Math.min(1/30, (tNow - tPrev) / 1000);
+        const dt = Math.min(1/30, (tNow - tPrev) / 1000); // clamp delta
         tPrev = tNow;
 
-        // Difficulty ramp
-        speed += 0.02 * dt; // slow growth
-        const moveSpeed = 220 * speed; // px/s
+        // Curva de dificuldade (calibrada para ~3% atingir 25 reais em 1 corrida)
+        // Aceleração ligeiramente agressiva + intervalos menores + tipos difíceis.
+        speed += 0.028 * dt;                 // cresce um pouco mais rápido que o demo
+        const moveSpeed = 230 * speed;       // velocidade base um pouco maior
 
-        // Player physics
+        // Física do player
         player.vy += player.gravity * dt;
         player.y += player.vy;
         const ground = GROUND_Y() - player.h;
-        if (player.y >= ground) {
-          player.y = ground; player.vy = 0; player.onGround = true;
-        }
+        if (player.y >= ground) { player.y = ground; player.vy = 0; player.onGround = true; }
+        else { player.onGround = false; }
 
-        // Spawn logic
+        // Animação
+        if (player.spriteReady && player.onGround) {
+          player.frameTimer += dt; const frameDur = 1 / SPRITE_FPS;
+          while (player.frameTimer >= frameDur) { player.frame = (player.frame + 1) % SPRITE_COLS; player.frameTimer -= frameDur; }
+        } else if (player.spriteReady && !player.onGround) { player.frame = 0; }
+
+        // Spawn
         spawnTimer += dt;
-        const target = Math.max(0.6, 1.6 - speed * 0.2); // faster spawns with speed
+        const target = Math.max(0.42, 1.5 - speed * 0.26); // encurta com a velocidade
         if (spawnTimer > target) { spawnObstacle(); spawnTimer = 0; }
 
-        // Move obstacles
+        // Move obstáculos
         for (let i = obstacles.length - 1; i >= 0; i--) {
-          const o = obstacles[i];
-          o.x -= moveSpeed * dt;
-          if (o.x + o.w < -10) obstacles.splice(i,1);
+          const o = obstacles[i]; o.x -= moveSpeed * dt; if (o.x + o.w < -10) obstacles.splice(i,1);
         }
 
-        // Score
-        score += 45 * dt * speed; // arbitrary scaling
+        // Pontuação e Reais
+        score += 48 * dt * speed; // escala um pouco maior
+        while (score >= nextRealAt) { reais += 1; nextRealAt += 500; }
 
-        // Collisions
-        for (const o of obstacles) {
+        // Abrir loja automaticamente quando tiver ao menos 25 reais e não estiver aberta
+        if (reais >= 25 && overlay.style.display === 'none') { running = false; openShop(); }
+
+        // Colisões
+        for (let i = 0; i < obstacles.length; i++) {
+          const o = obstacles[i];
           if (rectsOverlap({x:player.x,y:player.y,w:player.w,h:player.h}, o)) {
-            endGame();
+            // perde vida; se acabar, game over
+            obstacles.splice(i,1);
+            lives -= 1; if (lives <= 0) { endGame(); break; }
+            // invencibilidade breve: remove mais colisões no mesmo frame
             break;
           }
         }
@@ -271,61 +320,74 @@
         requestAnimationFrame(loop);
       }
 
+      // ===== Desenho =====
       function draw() {
         const w = canvas.width / (window.devicePixelRatio || 1);
         const h = canvas.height / (window.devicePixelRatio || 1);
         ctx.clearRect(0,0,w,h);
 
-        // Background parallax (simple stripes)
+        // Parallax simples
         const t = performance.now() / 1000;
         ctx.save();
         for (let i=0;i<3;i++){
-          const y = h*0.3 + i*22;
-          ctx.globalAlpha = 0.08 + i*0.06;
-          ctx.fillStyle = i%2 ? '#94a3b8' : '#60a5fa';
+          const y = h*0.3 + i*22; ctx.globalAlpha = 0.08 + i*0.06; ctx.fillStyle = i%2 ? '#94a3b8' : '#60a5fa';
           const offset = (t * 30 * (i+1) * speed) % (w+120);
-          for (let x=-offset; x<w+120; x+=120){
-            ctx.fillRect(x, y, 90, 2);
-          }
+          for (let x=-offset; x<w+120; x+=120){ ctx.fillRect(x, y, 90, 2); }
         }
         ctx.restore();
 
-        // Ground
-        ctx.fillStyle = '#0b1226';
-        ctx.fillRect(0, GROUND_Y(), w, h - GROUND_Y());
-        ctx.strokeStyle = '#1f2a44';
-        ctx.lineWidth = 2;
-        ctx.beginPath(); ctx.moveTo(0, GROUND_Y()); ctx.lineTo(w, GROUND_Y()); ctx.stroke();
+        // Chão
+        ctx.fillStyle = '#0b1226'; ctx.fillRect(0, GROUND_Y(), w, h - GROUND_Y());
+        ctx.strokeStyle = '#1f2a44'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(0, GROUND_Y()); ctx.lineTo(w, GROUND_Y()); ctx.stroke();
 
-        // Player (gradient rounded-rect)
-        const grd = ctx.createLinearGradient(player.x, player.y, player.x+player.w, player.y+player.h);
-        grd.addColorStop(0, player.colorA);
-        grd.addColorStop(1, player.colorB);
-        roundRect(ctx, player.x, player.y, player.w, player.h, 8, grd);
-
-        // Obstacles
-        for (const o of obstacles) {
-          ctx.fillStyle = o.kind === 'tall' ? '#f59e0b' : '#10b981';
-          roundRect(ctx, o.x, o.y, o.w, o.h, 6);
-          // a tiny decoration
-          ctx.globalAlpha = .25; ctx.fillRect(o.x+4, o.y+4, o.w-8, 3); ctx.globalAlpha=1;
+        // Player
+        if (player.spriteReady && player.frameW && player.frameH) {
+          const feetAlign = player.h; const destW = player.frameW; const destH = player.frameH;
+          const destX = player.x; const destY = player.y + feetAlign - destH; const sx = player.frame * player.frameW;
+          ctx.drawImage(spriteImg, sx, 0, player.frameW, player.frameH, destX, destY, destW, destH);
+        } else {
+          const grd = ctx.createLinearGradient(player.x, player.y, player.x+player.w, player.y+player.h);
+          grd.addColorStop(0, player.colorA); grd.addColorStop(1, player.colorB);
+          roundRect(ctx, player.x, player.y, player.w, player.h, 8, grd);
         }
+
+        // Obstáculos
+        for (const o of obstacles) {
+          let color = '#10b981'; if (o.kind==='tall') color='#f59e0b'; if (o.kind==='fly') color='#e879f9';
+          ctx.fillStyle = color; roundRect(ctx, o.x, o.y, o.w, o.h, 6); ctx.globalAlpha = .25; ctx.fillRect(o.x+4, o.y+4, o.w-8, 3); ctx.globalAlpha=1;
+        }
+
+        // Inventário (cosméticos simples no canto inferior esquerdo)
+        const invX = 10, invY = h - 28; ctx.font = '12px system-ui'; ctx.textBaseline='middle';
+        let ix = invX;
+        if (inventory.garrafa) { ctx.fillStyle = '#60a5fa'; roundRect(ctx, ix, invY, 18, 18, 4); ctx.fillStyle='#0b1022'; ctx.fillText('🍺', ix+4, invY+10); ix+=24; }
+        if (inventory.latinhas>0) { ctx.fillStyle = '#34d399'; roundRect(ctx, ix, invY, 18, 18, 4); ctx.fillStyle='#0b1022'; ctx.fillText('🥫x'+inventory.latinhas, ix+22, invY+10); ix+=64; }
+        if (inventory.docinhos>0) { ctx.fillStyle = '#f472b6'; roundRect(ctx, ix, invY, 18, 18, 4); ctx.fillStyle='#0b1022'; ctx.fillText('🍬x'+inventory.docinhos, ix+22, invY+10); }
       }
 
       function roundRect(ctx, x, y, w, h, r, fillStyle) {
-        r = Math.min(r, w/2, h/2);
-        ctx.beginPath();
-        ctx.moveTo(x+r, y);
-        ctx.arcTo(x+w, y, x+w, y+h, r);
-        ctx.arcTo(x+w, y+h, x, y+h, r);
-        ctx.arcTo(x, y+h, x, y, r);
-        ctx.arcTo(x, y, x+w, y, r);
-        if (fillStyle) ctx.fillStyle = fillStyle;
-        ctx.fill();
+        r = Math.min(r, w/2, h/2); ctx.beginPath(); ctx.moveTo(x+r, y); ctx.arcTo(x+w, y, x+w, y+h, r); ctx.arcTo(x+w, y+h, x, y+h, r); ctx.arcTo(x, y+h, x, y, r); ctx.arcTo(x, y, x+w, y, r); if (fillStyle) ctx.fillStyle = fillStyle; ctx.fill();
       }
+
+      // Sprite load handling
+      spriteImg.onload = () => { player.spriteReady = true; player.frameW = Math.floor(spriteImg.width / SPRITE_COLS); player.frameH = spriteImg.height; };
+      spriteImg.onerror = () => { player.spriteReady = false; };
 
       // Init
       reset();
+
+      // ===== Testes básicos =====
+      (function runBasicTests(){
+        try {
+          console.assert(rectsOverlap({x:0,y:0,w:10,h:10}, {x:5,y:5,w:2,h:2}) === true, 'Deve detectar sobreposição');
+          console.assert(rectsOverlap({x:0,y:0,w:10,h:10}, {x:10,y:0,w:2,h:2}) === false, 'Borda encostando não é colisão');
+          console.assert(typeof GROUND_Y() === 'number', 'GROUND_Y deve ser numérico');
+          console.assert(SPRITE_COLS >= 1, 'SPRITE_COLS >= 1');
+          console.log('%cTestes básicos passaram', 'color:#22d3ee');
+        } catch (err) {
+          console.error('Falha nos testes básicos:', err); showOverlayError('Falha nos testes básicos: ' + (err && err.message ? err.message : err));
+        }
+      })();
     })();
   </script>
 </body>
