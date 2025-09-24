@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Runner simples – HTML + CSS + JS puro</title>
+  <style>
+    :root {
+      --bg: #0f172a;        /* slate-900 */
+      --panel: #111827;     /* gray-900 */
+      --accent: #22d3ee;    /* cyan-400 */
+      --accent-2: #a78bfa;  /* violet-400 */
+      --text: #e5e7eb;      /* gray-200 */
+      --danger: #f87171;    /* red-400 */
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100svh;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      color: var(--text);
+      background: radial-gradient(60rem 60rem at 70% -10%, #1f2937 20%, var(--bg) 60%);
+      display: grid;
+      place-items: center;
+      padding: 16px;
+    }
+    .card {
+      width: min(960px, 100%);
+      background: linear-gradient(180deg, #0b1022, #0a0f1e);
+      border: 1px solid #1f2937;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.35);
+      overflow: hidden;
+    }
+    header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 16px; border-bottom: 1px solid #1f2937;
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,0));
+    }
+    header h1 { font-size: clamp(16px, 2.5vw, 20px); margin: 0; font-weight: 700; letter-spacing: .2px; }
+    header .controls { font-size: 14px; opacity: .9; }
+    header kbd { background:#111827; padding:2px 6px; border-radius:6px; border:1px solid #374151; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+
+    /* Canvas wrapper keeps aspect-ratio and responsive layout */
+    .stage-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: linear-gradient(180deg, #0b1022 60%, #0a0f1e 60%);
+      display: grid; place-items: center;
+    }
+    canvas { width: 100%; height: 100%; display: block; }
+
+    .hud {
+      position: absolute; inset: 0; pointer-events: none; padding: 10px 12px;
+      display: flex; justify-content: space-between; align-items: flex-start;
+      font-weight: 600; text-shadow: 0 2px 8px rgba(0,0,0,.6);
+    }
+    .chip {
+      background: rgba(34,211,238,.12);
+      border: 1px solid rgba(34,211,238,.35);
+      border-radius: 999px; padding: 6px 10px; margin-right: 6px;
+    }
+    .right .chip { background: rgba(167,139,250,.12); border-color: rgba(167,139,250,.35); }
+
+    .overlay { position:absolute; inset:0; display:grid; place-items:center; }
+    .panel {
+      background: rgba(17,24,39,.8); backdrop-filter: blur(6px);
+      border:1px solid #374151; border-radius:14px; padding:18px 20px; text-align:center;
+      max-width: 90%;
+    }
+    .title { font-size: clamp(18px, 4vw, 24px); margin: 0 0 6px; }
+    .subtitle { font-size: clamp(14px, 3vw, 16px); margin: 0 0 10px; opacity:.9; }
+    .btn {
+      display:inline-block; margin-top:10px; padding:10px 16px; border-radius:999px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      color:#061024; font-weight: 800; letter-spacing:.3px; border: none; cursor: pointer;
+      box-shadow: 0 8px 20px rgba(34,211,238,.25);
+    }
+    .btn:active { transform: translateY(1px); }
+
+    .mobile-tip { position:absolute; bottom:8px; left:0; right:0; text-align:center; font-size:12px; opacity:.7; }
+  </style>
+</head>
+<body>
+  <div class="card" id="app">
+    <header>
+      <h1>Runner simples – JS puro</h1>
+      <div class="controls">
+        <span class="chip">Pular: <kbd>Espaço</kbd> / <kbd>↑</kbd> / toque</span>
+        <span class="chip">Reiniciar: <kbd>R</kbd> / clique</span>
+      </div>
+    </header>
+
+    <div class="stage-wrap" id="wrap">
+      <canvas id="game" width="960" height="540" aria-label="Jogo runner"></canvas>
+      <div class="hud">
+        <div class="left"><span class="chip" id="score">Pontos: 0</span></div>
+        <div class="right"><span class="chip" id="speed">Velocidade: 1.0x</span></div>
+      </div>
+      <div class="overlay" id="overlay">
+        <div class="panel">
+          <p class="title">Pronto para correr?</p>
+          <p class="subtitle">Evite os obstáculos. Chegue o mais longe possível.</p>
+          <button class="btn" id="startBtn">Começar</button>
+          <div class="mobile-tip">Toque na tela para pular</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (() => {
+      const canvas = document.getElementById('game');
+      const ctx = canvas.getContext('2d');
+      const overlay = document.getElementById('overlay');
+      const startBtn = document.getElementById('startBtn');
+      const scoreEl = document.getElementById('score');
+      const speedEl = document.getElementById('speed');
+      const wrap = document.getElementById('wrap');
+
+      // Handle HiDPI rendering
+      function resizeCanvasToDisplaySize() {
+        const dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+        const { clientWidth: cw, clientHeight: ch } = canvas;
+        if (canvas.width !== cw * dpr || canvas.height !== ch * dpr) {
+          canvas.width = cw * dpr;
+          canvas.height = ch * dpr;
+        }
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0); // scale drawing ops
+      }
+
+      new ResizeObserver(resizeCanvasToDisplaySize).observe(wrap);
+      resizeCanvasToDisplaySize();
+
+      // Game state
+      let running = false;
+      let gameOver = false;
+      let tPrev = 0;
+      let score = 0;
+      let speed = 1.0;      // multiplier grows gradually
+      let spawnTimer = 0;   // time since last obstacle
+
+      const GROUND_Y = () => canvas.height / (window.devicePixelRatio || 1) * 0.8;
+
+      // Player
+      const player = {
+        x: 80,
+        y: 0,
+        w: 36,
+        h: 42,
+        vy: 0,
+        onGround: true,
+        jumpForce: 11.2,
+        gravity: 28,
+        colorA: '#22d3ee',
+        colorB: '#a78bfa'
+      };
+
+      function reset() {
+        running = false;
+        gameOver = false;
+        score = 0; speed = 1.0; spawnTimer = 0; tPrev = 0;
+        player.y = GROUND_Y() - player.h;
+        player.vy = 0; player.onGround = true;
+        obstacles.length = 0;
+        overlay.style.display = 'grid';
+        updateHUD();
+        draw();
+      }
+
+      // Obstacles
+      const obstacles = [];
+      function spawnObstacle() {
+        const baseH = 24 + Math.random() * 38; // 24–62
+        const w = 18 + Math.random() * 14;     // 18–32
+        const gapVariant = Math.random();
+        const y = GROUND_Y() - baseH;
+        const kind = gapVariant > 0.8 ? 'tall' : 'box';
+        obstacles.push({ x: canvas.width / (window.devicePixelRatio || 1) + 20, y, w, h: baseH, kind });
+      }
+
+      function jump() {
+        if (player.onGround && running && !gameOver) {
+          player.vy = -player.jumpForce;
+          player.onGround = false;
+        } else if (!running && !gameOver) {
+          start();
+        } else if (gameOver) {
+          reset();
+        }
+      }
+
+      function start() {
+        if (running) return;
+        overlay.style.display = 'none';
+        running = true;
+        requestAnimationFrame(loop);
+      }
+
+      function endGame() {
+        running = false; gameOver = true;
+        overlay.style.display = 'grid';
+        overlay.querySelector('.title').textContent = 'Fim de jogo';
+        overlay.querySelector('.subtitle').textContent = `Você marcou ${Math.floor(score)} pontos.`;
+        startBtn.textContent = 'Jogar novamente';
+      }
+
+      function updateHUD() {
+        scoreEl.textContent = `Pontos: ${Math.floor(score)}`;
+        speedEl.textContent = `Velocidade: ${speed.toFixed(1)}x`;
+      }
+
+      // Input
+      window.addEventListener('keydown', (e) => {
+        if (e.code === 'Space' || e.code === 'ArrowUp') {
+          e.preventDefault(); jump();
+        } else if (e.key.toLowerCase() === 'r') {
+          reset();
+        }
+      });
+      canvas.addEventListener('pointerdown', jump);
+      startBtn.addEventListener('click', () => (gameOver ? reset() : start()));
+
+      // Utils
+      function rectsOverlap(a,b){ return a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y; }
+
+      function loop(tNow) {
+        if (!running) return;
+        if (!tPrev) tPrev = tNow;
+        const dt = Math.min(1/30, (tNow - tPrev) / 1000);
+        tPrev = tNow;
+
+        // Difficulty ramp
+        speed += 0.02 * dt; // slow growth
+        const moveSpeed = 220 * speed; // px/s
+
+        // Player physics
+        player.vy += player.gravity * dt;
+        player.y += player.vy;
+        const ground = GROUND_Y() - player.h;
+        if (player.y >= ground) {
+          player.y = ground; player.vy = 0; player.onGround = true;
+        }
+
+        // Spawn logic
+        spawnTimer += dt;
+        const target = Math.max(0.6, 1.6 - speed * 0.2); // faster spawns with speed
+        if (spawnTimer > target) { spawnObstacle(); spawnTimer = 0; }
+
+        // Move obstacles
+        for (let i = obstacles.length - 1; i >= 0; i--) {
+          const o = obstacles[i];
+          o.x -= moveSpeed * dt;
+          if (o.x + o.w < -10) obstacles.splice(i,1);
+        }
+
+        // Score
+        score += 45 * dt * speed; // arbitrary scaling
+
+        // Collisions
+        for (const o of obstacles) {
+          if (rectsOverlap({x:player.x,y:player.y,w:player.w,h:player.h}, o)) {
+            endGame();
+            break;
+          }
+        }
+
+        updateHUD();
+        draw();
+        requestAnimationFrame(loop);
+      }
+
+      function draw() {
+        const w = canvas.width / (window.devicePixelRatio || 1);
+        const h = canvas.height / (window.devicePixelRatio || 1);
+        ctx.clearRect(0,0,w,h);
+
+        // Background parallax (simple stripes)
+        const t = performance.now() / 1000;
+        ctx.save();
+        for (let i=0;i<3;i++){
+          const y = h*0.3 + i*22;
+          ctx.globalAlpha = 0.08 + i*0.06;
+          ctx.fillStyle = i%2 ? '#94a3b8' : '#60a5fa';
+          const offset = (t * 30 * (i+1) * speed) % (w+120);
+          for (let x=-offset; x<w+120; x+=120){
+            ctx.fillRect(x, y, 90, 2);
+          }
+        }
+        ctx.restore();
+
+        // Ground
+        ctx.fillStyle = '#0b1226';
+        ctx.fillRect(0, GROUND_Y(), w, h - GROUND_Y());
+        ctx.strokeStyle = '#1f2a44';
+        ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(0, GROUND_Y()); ctx.lineTo(w, GROUND_Y()); ctx.stroke();
+
+        // Player (gradient rounded-rect)
+        const grd = ctx.createLinearGradient(player.x, player.y, player.x+player.w, player.y+player.h);
+        grd.addColorStop(0, player.colorA);
+        grd.addColorStop(1, player.colorB);
+        roundRect(ctx, player.x, player.y, player.w, player.h, 8, grd);
+
+        // Obstacles
+        for (const o of obstacles) {
+          ctx.fillStyle = o.kind === 'tall' ? '#f59e0b' : '#10b981';
+          roundRect(ctx, o.x, o.y, o.w, o.h, 6);
+          // a tiny decoration
+          ctx.globalAlpha = .25; ctx.fillRect(o.x+4, o.y+4, o.w-8, 3); ctx.globalAlpha=1;
+        }
+      }
+
+      function roundRect(ctx, x, y, w, h, r, fillStyle) {
+        r = Math.min(r, w/2, h/2);
+        ctx.beginPath();
+        ctx.moveTo(x+r, y);
+        ctx.arcTo(x+w, y, x+w, y+h, r);
+        ctx.arcTo(x+w, y+h, x, y+h, r);
+        ctx.arcTo(x, y+h, x, y, r);
+        ctx.arcTo(x, y, x+w, y, r);
+        if (fillStyle) ctx.fillStyle = fillStyle;
+        ctx.fill();
+      }
+
+      // Init
+      reset();
+    })();
+  </script>
+</body>
+</html>
