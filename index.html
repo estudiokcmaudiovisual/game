@@ -3,62 +3,50 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Runner – Reais & Loja (HTML + CSS + JS)</title>
+  <title>Runner – Reais & Loja (c/ Pulo Duplo & Demo)</title>
   <style>
-    :root {
-      --bg: #0f172a;        /* slate-900 */
-      --panel: #111827;     /* gray-900 */
-      --accent: #22d3ee;    /* cyan-400 */
-      --accent-2: #a78bfa;  /* violet-400 */
-      --text: #e5e7eb;      /* gray-200 */
-      --danger: #f87171;    /* red-400 */
-      --ok: #34d399;        /* green-400 */
-      --amber: #f59e0b;     /* amber-500 */
+    :root{
+      --bg:#0f172a; --panel:#111827; --accent:#22d3ee; --accent-2:#a78bfa;
+      --text:#e5e7eb; --danger:#f87171; --ok:#34d399; --amber:#f59e0b;
     }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      min-height: 100svh;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
-      color: var(--text);
-      background: radial-gradient(60rem 60rem at 70% -10%, #1f2937 20%, var(--bg) 60%);
-      display: grid; place-items: center; padding: 16px;
+    *{box-sizing:border-box}
+    body{
+      margin:0; min-height:100svh; font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
+      color:var(--text);
+      background:radial-gradient(60rem 60rem at 70% -10%,#1f2937 20%,var(--bg) 60%);
+      display:grid; place-items:center; padding:16px;
     }
-    .card {
-      width: min(960px, 100%);
-      background: linear-gradient(180deg, #0b1022, #0a0f1e);
-      border: 1px solid #1f2937; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,.35);
-      overflow: hidden;
-    }
-    header { display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border-bottom:1px solid #1f2937; background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,0)); }
-    header h1 { font-size: clamp(16px, 2.5vw, 20px); margin:0; font-weight:700; letter-spacing:.2px; }
-    header .controls { font-size: 14px; opacity: .9; }
-    header kbd { background:#111827; padding:2px 6px; border-radius:6px; border:1px solid #374151; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    .card{width:min(960px,100%); background:linear-gradient(180deg,#0b1022,#0a0f1e);
+      border:1px solid #1f2937; border-radius:16px; box-shadow:0 10px 30px rgba(0,0,0,.35); overflow:hidden;}
+    header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid #1f2937;background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,0))}
+    header h1{font-size:clamp(16px,2.5vw,20px);margin:0;font-weight:700;letter-spacing:.2px}
+    header .controls{font-size:14px;opacity:.9}
+    header kbd{background:#111827;padding:2px 6px;border-radius:6px;border:1px solid #374151;font-family:ui-monospace,Menlo,Consolas,monospace}
 
-    .stage-wrap { position: relative; width: 100%; aspect-ratio: 16 / 9; background: linear-gradient(180deg, #0b1022 60%, #0a0f1e 60%); display: grid; place-items: center; }
-    canvas { width: 100%; height: 100%; display: block; }
+    .stage-wrap{position:relative;width:100%;aspect-ratio:16/9;background:linear-gradient(180deg,#0b1022 60%,#0a0f1e 60%);display:grid;place-items:center}
+    canvas{width:100%;height:100%;display:block}
 
-    .hud { position:absolute; inset:0; pointer-events:none; padding:10px 12px; display:flex; justify-content:space-between; align-items:flex-start; font-weight:600; text-shadow:0 2px 8px rgba(0,0,0,.6); gap:8px; }
-    .left, .right { display:flex; gap:8px; flex-wrap:wrap; }
-    .chip { background: rgba(34,211,238,.12); border: 1px solid rgba(34,211,238,.35); border-radius: 999px; padding: 6px 10px; }
-    .chip.ok { background: rgba(52,211,153,.12); border-color: rgba(52,211,153,.35); }
-    .chip.amb { background: rgba(245,158,11,.12); border-color: rgba(245,158,11,.35); }
-    .chip.vio { background: rgba(167,139,250,.12); border-color: rgba(167,139,250,.35); }
+    .hud{position:absolute;inset:0;pointer-events:none;padding:10px 12px;display:flex;justify-content:space-between;align-items:flex-start;font-weight:600;text-shadow:0 2px 8px rgba(0,0,0,.6);gap:8px}
+    .left,.right{display:flex;gap:8px;flex-wrap:wrap}
+    .chip{background:rgba(34,211,238,.12);border:1px solid rgba(34,211,238,.35);border-radius:999px;padding:6px 10px}
+    .chip.ok{background:rgba(52,211,153,.12);border-color:rgba(52,211,153,.35)}
+    .chip.amb{background:rgba(245,158,11,.12);border-color:rgba(245,158,11,.35)}
+    .chip.vio{background:rgba(167,139,250,.12);border-color:rgba(167,139,250,.35)}
 
-    .overlay { position:absolute; inset:0; display:grid; place-items:center; }
-    .panel { background: rgba(17,24,39,.85); backdrop-filter: blur(6px); border:1px solid #374151; border-radius:14px; padding:18px 20px; text-align:center; max-width: 90%; }
-    .title { font-size: clamp(18px, 4vw, 24px); margin: 0 0 6px; }
-    .subtitle { font-size: clamp(14px, 3vw, 16px); margin: 0 10px 10px; opacity:.9; }
-    .btn { display:inline-block; margin-top:10px; padding:10px 16px; border-radius:999px; background: linear-gradient(90deg, var(--accent), var(--accent-2)); color:#061024; font-weight: 800; letter-spacing:.3px; border: none; cursor: pointer; box-shadow: 0 8px 20px rgba(34,211,238,.25); }
-    .btn:active { transform: translateY(1px); }
+    .overlay{position:absolute;inset:0;display:grid;place-items:center}
+    .panel{background:rgba(17,24,39,.85);backdrop-filter:blur(6px);border:1px solid #374151;border-radius:14px;padding:18px 20px;text-align:center;max-width:90%}
+    .title{font-size:clamp(18px,4vw,24px);margin:0 0 6px}
+    .subtitle{font-size:clamp(14px,3vw,16px);margin:0 10px 10px;opacity:.9}
+    .btn{display:inline-block;margin-top:10px;padding:10px 16px;border-radius:999px;background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#061024;font-weight:800;letter-spacing:.3px;border:none;cursor:pointer;box-shadow:0 8px 20px rgba(34,211,238,.25)}
+    .btn:active{transform:translateY(1px)}
 
-    .shop { display:grid; gap:8px; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); margin-top:10px; }
-    .item { border:1px solid #374151; border-radius:12px; padding:12px; background: rgba(255,255,255,.02); text-align:left; }
-    .item h3 { margin:0 0 6px; font-size:16px; }
-    .item p { margin:0; font-size:13px; opacity:.9; }
-    .item .price { font-weight:800; color:var(--ok); margin-top:6px; }
+    .shop{display:grid;gap:8px;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));margin-top:10px}
+    .item{border:1px solid #374151;border-radius:12px;padding:12px;background:rgba(255,255,255,.02);text-align:left}
+    .item h3{margin:0 0 6px;font-size:16px}
+    .item p{margin:0;font-size:13px;opacity:.9}
+    .item .price{font-weight:800;color:var(--ok);margin-top:6px}
 
-    .mobile-tip { position:absolute; bottom:8px; left:0; right:0; text-align:center; font-size:12px; opacity:.7; }
+    .mobile-tip{position:absolute;bottom:8px;left:0;right:0;text-align:center;font-size:12px;opacity:.7}
   </style>
 </head>
 <body>
@@ -74,7 +62,7 @@
 
     <div class="stage-wrap" id="wrap">
       <canvas id="game" width="960" height="540" aria-label="Jogo runner"></canvas>
-      <div class="hud">
+      <div class="hud" aria-live="polite">
         <div class="left">
           <span class="chip" id="score">Pontos: 0</span>
           <span class="chip ok" id="reais">Reais: 0</span>
@@ -82,13 +70,17 @@
         </div>
         <div class="right">
           <span class="chip vio" id="speed">Velocidade: 1.0x</span>
+          <span class="chip" id="mode">Modo: DEMO</span>
         </div>
       </div>
       <div class="overlay" id="overlay">
         <div class="panel" id="panel">
           <p class="title" id="ovTitle">Pronto para correr?</p>
-          <p class="subtitle" id="ovText">Ganhe <b>1 real</b> a cada <b>500 pontos</b>. Junte <b>25 reais</b> em uma única corrida para trocar por <b>vidas</b> ou <b>itens</b> na <b>Loja</b>.</p>
-          <button class="btn" id="startBtn">Começar</button>
+          <p class="subtitle" id="ovText">
+            Ganhe <b>1 real</b> a cada <b>500 pontos</b>. Junte <b>25 reais</b> em uma única corrida para trocar por <b>vidas</b> ou <b>itens</b> na <b>Loja</b>.
+            <br><br><i>Observação:</i> o jogo real só começa ao clicar em <b>Iniciar o jogo</b>. Sem clicar, fica em <b>modo demonstrativo</b> (sem acumular reais).
+          </p>
+          <button class="btn" id="startBtn" autofocus>Iniciar o jogo</button>
           <div class="mobile-tip">Toque na tela para pular</div>
         </div>
       </div>
@@ -126,13 +118,13 @@
       const ovTitle = document.getElementById('ovTitle');
       const ovText = document.getElementById('ovText');
 
-      // === Sprite config (opcional) ===
+      // === Sprite opcional (fallback é um bloco arredondado) ===
       const SPRITE_URL = 'player.png';
-      const SPRITE_COLS = 6;      // nº de quadros na folha horizontal
-      const SPRITE_FPS  = 10;     // velocidade da animação de corrida
+      const SPRITE_COLS = 6;
+      const SPRITE_FPS  = 10;
       const spriteImg = new Image(); spriteImg.src = SPRITE_URL;
 
-      // HiDPI
+      // HiDPI responsivo
       function resizeCanvasToDisplaySize() {
         const dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
         const { clientWidth: cw, clientHeight: ch } = canvas;
@@ -145,17 +137,18 @@
       new ResizeObserver(resizeCanvasToDisplaySize).observe(wrap);
       resizeCanvasToDisplaySize();
 
-      // ============ Estado do jogo ============
-      let running = false, gameOver = false;
+      // ===== Estado do jogo =====
+      let running = false, gameOver = false, demo = true;
       let tPrev = 0, score = 0, speed = 1.0, spawnTimer = 0;
-      let reais = 0, nextRealAt = 500; // 1 real a cada 500 pontos
-      let lives = 1;                   // começa difícil: 1 vida
+      let reais = 0, nextRealAt = 500;   // 1 real a cada 500 pontos
+      let lives = 1;                     // começa com 1 vida (difícil)
       let inventory = { garrafa:false, latinhas:0, docinhos:0 };
-      let redeemedCount = 0;           // quantas trocas já feitas nessa corrida
+      let redeemedCount = 0;             // trocas feitas na corrida
+      let jumpsUsed = 0; const MAX_JUMPS = 2;  // pulo duplo
+      let hitCooldown = 0;               // invencibilidade pós-dano (s)
 
       const GROUND_Y = () => canvas.height / (window.devicePixelRatio || 1) * 0.8;
 
-      // Player
       const player = {
         x: 80, y: 0, w: 36, h: 42, vy: 0, onGround: true,
         jumpForce: 11.6, gravity: 30,
@@ -163,38 +156,44 @@
         spriteReady:false, frame:0, frameTimer:0, frameW:0, frameH:0
       };
 
-      // Obstáculos
       const obstacles = [];
       function spawnObstacle() {
+        // Obstáculos "justos": respeitar intervalo; evitar overlaps absurdos
         const typeRand = Math.random();
-        const baseH = 22 + Math.random() * 42; // 22–64
-        const w = 18 + Math.random() * 16;     // 18–34
+        const baseH = 22 + Math.random() * 42;    // 22–64
+        const w = 18 + Math.random() * 16;        // 18–34
         const groundY = GROUND_Y();
+        const xStart = canvas.width/(window.devicePixelRatio||1) + 24;
 
-        if (typeRand < Math.min(0.25 + speed*0.03, 0.6)) {
-          // obstáculo aéreo (força timing do pulo)
+        if (typeRand < Math.min(0.22 + speed*0.02, 0.5)) {
+          // Aéreo (exige timing de pulo)
           const h = 18 + Math.random() * 20;
-          const y = groundY - (player.h + 24 + Math.random()*22); // voando
-          obstacles.push({ x: canvas.width/(window.devicePixelRatio||1) + 20, y, w, h, kind:'fly' });
-        } else if (typeRand < Math.min(0.50 + speed*0.05, 0.85)) {
-          // pares próximos (gap curto)
+          const y = Math.max(groundY - (player.h + 36 + Math.random()*18), 40);
+          obstacles.push({ x:xStart, y, w, h, kind:'fly' });
+        } else if (typeRand < Math.min(0.48 + speed*0.04, 0.82)) {
+          // Pares com gap curto (viável com pulo duplo)
           const h1 = baseH;
           const h2 = 18 + Math.random()*26;
-          const xStart = canvas.width/(window.devicePixelRatio||1) + 20;
+          const gapPx = 52 + Math.random()*28;
           obstacles.push({ x:xStart, y: groundY - h1, w, h: h1, kind:'box' });
-          obstacles.push({ x:xStart + 46 + Math.random()*26, y: groundY - h2, w, h: h2, kind:'box' });
+          obstacles.push({ x:xStart + gapPx, y: groundY - h2, w, h: h2, kind:'box' });
         } else {
-          // único padrão
-          const y = groundY - baseH; const kind = Math.random()>0.8 ? 'tall' : 'box';
-          obstacles.push({ x: canvas.width/(window.devicePixelRatio||1) + 20, y, w, h: baseH, kind });
+          // Único
+          const y = groundY - baseH;
+          const kind = Math.random()>0.8 ? 'tall' : 'box';
+          obstacles.push({ x:xStart, y, w, h: baseH, kind });
         }
       }
 
       function openShop() {
+        if (demo) return; // sem loja no modo demo
         overlay.style.display = 'grid';
         ovTitle.textContent = 'Loja';
         ovText.innerHTML = `Você tem <b>${reais} ${reais===1?'real':'reais'}</b>. Cada item custa <b>25 reais</b>.`;
+
+        // Limpa UI anterior
         panel.querySelectorAll('.shop, .btn.shop-close').forEach(n=>n.remove());
+
         const shop = document.createElement('div'); shop.className='shop';
         const items = [
           { id:'vidas', title:'+2 vidas', desc:'Sobreviva por mais tempo nesta corrida.', action:()=>{ if (reais>=25){ reais-=25; lives+=2; redeemedCount++; closeShop(); } } },
@@ -210,33 +209,54 @@
           shop.appendChild(div);
         }
         panel.appendChild(shop);
-        const close = document.createElement('button'); close.className='btn shop-close'; close.textContent='Fechar (voltar ao jogo)';
+
+        const close = document.createElement('button');
+        close.className='btn shop-close';
+        close.textContent='Fechar (voltar ao jogo)';
         close.addEventListener('click', ()=>{ closeShop(); });
         panel.appendChild(close);
       }
-      function closeShop(){ overlay.style.display='none'; if (!gameOver){ running=true; requestAnimationFrame(loop); }}
+      function closeShop(){
+        overlay.style.display='none';
+        if (!gameOver){ running=true; requestAnimationFrame(loop); }
+      }
 
       function reset() {
-        running = false; gameOver = false; tPrev = 0;
-        score = 0; speed = 1.0; spawnTimer = 0; reais = 0; nextRealAt = 500; lives = 1; redeemedCount = 0;
+        running = false; gameOver = false; demo = true; tPrev = 0;
+        score = 0; speed = 1.0; spawnTimer = 0; reais = 0; nextRealAt = 500;
+        lives = 1; redeemedCount = 0; jumpsUsed = 0; hitCooldown = 0;
         inventory = { garrafa:false, latinhas:0, docinhos:0 };
         player.y = GROUND_Y() - player.h; player.vy = 0; player.onGround = true; player.frame = 0; player.frameTimer = 0;
         obstacles.length = 0;
-        overlay.style.display = 'grid'; ovTitle.textContent='Pronto para correr?';
-        ovText.innerHTML = 'Ganhe <b>1 real</b> a cada <b>500 pontos</b>. Junte <b>25 reais</b> em uma única corrida para trocar por <b>vidas</b> ou <b>itens</b> na <b>Loja</b>.';
-        startBtn.textContent = 'Começar'; updateHUD(); draw();
+        overlay.style.display = 'grid';
+        ovTitle.textContent='Pronto para correr?';
+        ovText.innerHTML = 'Ganhe <b>1 real</b> a cada <b>500 pontos</b>. Junte <b>25 reais</b> em uma única corrida para trocar por <b>vidas</b> ou <b>itens</b> na <b>Loja</b>.<br><br><i>Observação:</i> o jogo real só começa ao clicar em <b>Iniciar o jogo</b>. Sem clicar, fica em <b>modo demonstrativo</b> (sem acumular reais).';
+        startBtn.textContent = 'Iniciar o jogo';
+        updateHUD(); draw();
       }
 
       function jump() {
-        if (player.onGround && running && !gameOver) { player.vy = -player.jumpForce; player.onGround = false; }
-        else if (!running && !gameOver) { start(); }
-        else if (gameOver) { reset(); }
+        // Pulo duplo: até 2 pulos antes de tocar o chão
+        if (demo) return;             // no DEMO o salto é automático
+        if (!running || gameOver) return;
+        if (jumpsUsed < MAX_JUMPS) {
+          player.vy = -player.jumpForce; player.onGround = false; jumpsUsed++;
+        }
       }
 
-      function start() { if (running) return; overlay.style.display='none'; running = true; requestAnimationFrame(loop); }
+      function start() {
+        if (running) return;
+        // Início apenas via botão: desligar DEMO e resetar corrida
+        demo = false; score = 0; reais = 0; nextRealAt = 500; redeemedCount = 0; lives = 1; jumpsUsed = 0; hitCooldown = 0;
+        obstacles.length = 0;
+        overlay.style.display='none';
+        running = true;
+        requestAnimationFrame(loop);
+      }
 
       function endGame() {
-        running = false; gameOver = true; overlay.style.display = 'grid';
+        running = false; gameOver = true;
+        overlay.style.display = 'grid';
         ovTitle.textContent = 'Fim de jogo';
         ovText.innerHTML = `Você marcou <b>${Math.floor(score)}</b> pontos, juntou <b>${reais} ${reais===1?'real':'reais'}</b> e fez <b>${redeemedCount}</b> troca(s).`;
         startBtn.textContent = 'Jogar novamente';
@@ -247,71 +267,124 @@
         reaisEl.textContent = `Reais: ${reais}`;
         speedEl.textContent = `Velocidade: ${speed.toFixed(1)}x`;
         livesEl.textContent = `Vidas: ${lives}`;
+        const modeEl = document.getElementById('mode');
+        if (modeEl) modeEl.textContent = `Modo: ${demo ? 'DEMO' : 'JOGO'}`;
       }
 
       // Input
       window.addEventListener('keydown', (e) => {
         if (e.code === 'Space' || e.code === 'ArrowUp') { e.preventDefault(); jump(); }
         else if (e.key.toLowerCase() === 'r') { reset(); }
-        else if (e.key.toLowerCase() === 'l') { if (!gameOver) { running=false; openShop(); } }
+        else if (e.key.toLowerCase() === 'l') { if (!gameOver && !demo) { running=false; openShop(); } }
       });
       canvas.addEventListener('pointerdown', jump);
-      startBtn.addEventListener('click', () => (gameOver ? reset() : start()));
+      startBtn.addEventListener('click', () => {
+        if (gameOver) { reset(); } else { start(); }
+      });
 
-      // Utils
-      function rectsOverlap(a,b){ return a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y; }
+      // ===== Util =====
+      function rectsOverlap(a,b){
+        return a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
+      }
 
       // ===== Loop principal =====
       function loop(tNow) {
         if (!running) return;
         if (!tPrev) tPrev = tNow;
-        const dt = Math.min(1/30, (tNow - tPrev) / 1000); // clamp delta
+        const dt = Math.min(1/30, (tNow - tPrev) / 1000); // clamp
         tPrev = tNow;
 
-        // Curva de dificuldade (calibrada para ~3% atingir 25 reais em 1 corrida)
-        // Aceleração ligeiramente agressiva + intervalos menores + tipos difíceis.
-        speed += 0.028 * dt;                 // cresce um pouco mais rápido que o demo
-        const moveSpeed = 230 * speed;       // velocidade base um pouco maior
+        // Curva de dificuldade – desafiador mas justo
+        speed += 0.025 * dt;                     // crescimento suave
+        const moveSpeed = 220 * speed;
+
+        // Parâmetros de justiça
+        const timeAir = (2 * player.jumpForce) / player.gravity; // ~tempo no ar
+        const minGapTime = Math.max(0.6, timeAir * 0.95);        // janelas menores tendem a ser injustas
 
         // Física do player
         player.vy += player.gravity * dt;
         player.y += player.vy;
         const ground = GROUND_Y() - player.h;
-        if (player.y >= ground) { player.y = ground; player.vy = 0; player.onGround = true; }
-        else { player.onGround = false; }
+        if (player.y >= ground) {
+          player.y = ground; player.vy = 0;
+          if (!player.onGround) { player.onGround = true; jumpsUsed = 0; }
+        } else { player.onGround = false; }
 
-        // Animação
+        // Animação sprite (se existir)
         if (player.spriteReady && player.onGround) {
           player.frameTimer += dt; const frameDur = 1 / SPRITE_FPS;
           while (player.frameTimer >= frameDur) { player.frame = (player.frame + 1) % SPRITE_COLS; player.frameTimer -= frameDur; }
-        } else if (player.spriteReady && !player.onGround) { player.frame = 0; }
+        } else if (player.spriteReady && !player.onGround) {
+          player.frame = 0;
+        }
 
-        // Spawn
+        // Spawn respeitando intervalo mínimo
         spawnTimer += dt;
-        const target = Math.max(0.42, 1.5 - speed * 0.26); // encurta com a velocidade
+        const baseTarget = Math.max(0.6, 1.6 - speed * 0.22);
+        const target = Math.max(baseTarget, minGapTime);
         if (spawnTimer > target) { spawnObstacle(); spawnTimer = 0; }
+
+        // Corrige padrões muito colados
+        for (let i=1;i<obstacles.length;i++){
+          const prev = obstacles[i-1], cur = obstacles[i];
+          const gap = (cur.x - (prev.x + prev.w));
+          if (gap < moveSpeed * minGapTime * 0.6) {
+            cur.x = prev.x + prev.w + moveSpeed * minGapTime * 0.6;
+          }
+        }
 
         // Move obstáculos
         for (let i = obstacles.length - 1; i >= 0; i--) {
-          const o = obstacles[i]; o.x -= moveSpeed * dt; if (o.x + o.w < -10) obstacles.splice(i,1);
+          const o = obstacles[i];
+          o.x -= moveSpeed * dt;
+          if (o.x + o.w < -10) obstacles.splice(i,1);
         }
 
-        // Pontuação e Reais
-        score += 48 * dt * speed; // escala um pouco maior
-        while (score >= nextRealAt) { reais += 1; nextRealAt += 500; }
+        // Invencibilidade/cooldown de dano
+        if (hitCooldown > 0) hitCooldown = Math.max(0, hitCooldown - dt);
 
-        // Abrir loja automaticamente quando tiver ao menos 25 reais e não estiver aberta
-        if (reais >= 25 && overlay.style.display === 'none') { running = false; openShop(); }
+        // Pontuação mais lenta
+        const scoreRate = 12 * dt * (1 + 0.4*(speed-1)); // mais devagar
+        score += scoreRate;
 
-        // Colisões
+        // Reais só no modo jogo
+        if (!demo) {
+          while (score >= nextRealAt) { reais += 1; nextRealAt += 500; }
+          if (reais >= 25 && overlay.style.display === 'none') { running = false; openShop(); }
+        }
+
+        // Colisões (justas)
+        let collidedIdx = -1;
         for (let i = 0; i < obstacles.length; i++) {
           const o = obstacles[i];
-          if (rectsOverlap({x:player.x,y:player.y,w:player.w,h:player.h}, o)) {
-            // perde vida; se acabar, game over
-            obstacles.splice(i,1);
-            lives -= 1; if (lives <= 0) { endGame(); break; }
-            // invencibilidade breve: remove mais colisões no mesmo frame
-            break;
+          if (rectsOverlap({x:player.x,y:player.y,w:player.w,h:player.h}, o)) { collidedIdx = i; break; }
+        }
+        if (collidedIdx >= 0) {
+          if (demo) {
+            // No DEMO, reinicia discretamente
+            obstacles.length = 0; score = 0; nextRealAt = 500; speed = 1.0; jumpsUsed = 0;
+            player.y = ground; player.vy = 0; player.onGround = true;
+          } else if (hitCooldown <= 0) {
+            // Em jogo: remove obstáculo e dá invencibilidade breve
+            obstacles.splice(collidedIdx, 1);
+            lives -= 1; hitCooldown = 0.7; // 700 ms
+            if (lives <= 0) { endGame(); updateHUD(); draw(); return; }
+          }
+        }
+
+        // Auto-jogo no modo DEMO (salto automático previsível)
+        if (demo) {
+          let nearest = null; let nx = Infinity;
+          for (const o of obstacles) {
+            const dx = o.x - (player.x + player.w);
+            if (dx > 0 && dx < nx) { nx = dx; nearest = o; }
+          }
+          if (nearest) {
+            const trigger = moveSpeed * 0.42; // distância de reação
+            if (nx < trigger && jumpsUsed < MAX_JUMPS) {
+              player.vy = -player.jumpForce; player.onGround = false; jumpsUsed++;
+            }
           }
         }
 
@@ -340,10 +413,11 @@
         ctx.fillStyle = '#0b1226'; ctx.fillRect(0, GROUND_Y(), w, h - GROUND_Y());
         ctx.strokeStyle = '#1f2a44'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(0, GROUND_Y()); ctx.lineTo(w, GROUND_Y()); ctx.stroke();
 
-        // Player
+        // Player (sprite opcional)
         if (player.spriteReady && player.frameW && player.frameH) {
-          const feetAlign = player.h; const destW = player.frameW; const destH = player.frameH;
-          const destX = player.x; const destY = player.y + feetAlign - destH; const sx = player.frame * player.frameW;
+          const destW = player.frameW, destH = player.frameH;
+          const destX = player.x, destY = player.y + player.h - destH;
+          const sx = player.frame * player.frameW;
           ctx.drawImage(spriteImg, sx, 0, player.frameW, player.frameH, destX, destY, destW, destH);
         } else {
           const grd = ctx.createLinearGradient(player.x, player.y, player.x+player.w, player.y+player.h);
@@ -353,11 +427,15 @@
 
         // Obstáculos
         for (const o of obstacles) {
-          let color = '#10b981'; if (o.kind==='tall') color='#f59e0b'; if (o.kind==='fly') color='#e879f9';
-          ctx.fillStyle = color; roundRect(ctx, o.x, o.y, o.w, o.h, 6); ctx.globalAlpha = .25; ctx.fillRect(o.x+4, o.y+4, o.w-8, 3); ctx.globalAlpha=1;
+          let color = '#10b981';
+          if (o.kind==='tall') color='#f59e0b';
+          if (o.kind==='fly') color='#e879f9';
+          ctx.fillStyle = color;
+          roundRect(ctx, o.x, o.y, o.w, o.h, 6);
+          ctx.globalAlpha = .25; ctx.fillRect(o.x+4, o.y+4, o.w-8, 3); ctx.globalAlpha=1;
         }
 
-        // Inventário (cosméticos simples no canto inferior esquerdo)
+        // Inventário (cosméticos HUD)
         const invX = 10, invY = h - 28; ctx.font = '12px system-ui'; ctx.textBaseline='middle';
         let ix = invX;
         if (inventory.garrafa) { ctx.fillStyle = '#60a5fa'; roundRect(ctx, ix, invY, 18, 18, 4); ctx.fillStyle='#0b1022'; ctx.fillText('🍺', ix+4, invY+10); ix+=24; }
@@ -365,27 +443,48 @@
         if (inventory.docinhos>0) { ctx.fillStyle = '#f472b6'; roundRect(ctx, ix, invY, 18, 18, 4); ctx.fillStyle='#0b1022'; ctx.fillText('🍬x'+inventory.docinhos, ix+22, invY+10); }
       }
 
-      function roundRect(ctx, x, y, w, h, r, fillStyle) {
-        r = Math.min(r, w/2, h/2); ctx.beginPath(); ctx.moveTo(x+r, y); ctx.arcTo(x+w, y, x+w, y+h, r); ctx.arcTo(x+w, y+h, x, y+h, r); ctx.arcTo(x, y+h, x, y, r); ctx.arcTo(x, y, x+w, y, r); if (fillStyle) ctx.fillStyle = fillStyle; ctx.fill();
+      function roundRect(ctx,x,y,w,h,r,fillStyle){
+        r = Math.min(r, w/2, h/2);
+        ctx.beginPath();
+        ctx.moveTo(x+r, y);
+        ctx.arcTo(x+w, y, x+w, y+h, r);
+        ctx.arcTo(x+w, y+h, x, y+h, r);
+        ctx.arcTo(x, y+h, x, y, r);
+        ctx.arcTo(x, y, x+w, y, r);
+        if (fillStyle) ctx.fillStyle = fillStyle;
+        ctx.fill();
       }
 
       // Sprite load handling
-      spriteImg.onload = () => { player.spriteReady = true; player.frameW = Math.floor(spriteImg.width / SPRITE_COLS); player.frameH = spriteImg.height; };
+      spriteImg.onload = () => {
+        player.spriteReady = true;
+        player.frameW = Math.floor(spriteImg.width / SPRITE_COLS);
+        player.frameH = spriteImg.height;
+      };
       spriteImg.onerror = () => { player.spriteReady = false; };
+
+      // Pausa ao trocar de aba (qualidade de vida)
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden && running && !demo) {
+          running = false;
+          overlay.style.display = 'grid';
+          ovTitle.textContent = 'Jogo pausado';
+          ovText.innerHTML = 'Volte à aba e clique em <b>Iniciar o jogo</b> para retomar.';
+          startBtn.textContent = 'Retomar (Iniciar o jogo)';
+        }
+      });
 
       // Init
       reset();
 
-      // ===== Testes básicos =====
+      // Testes básicos
       (function runBasicTests(){
         try {
-          console.assert(rectsOverlap({x:0,y:0,w:10,h:10}, {x:5,y:5,w:2,h:2}) === true, 'Deve detectar sobreposição');
-          console.assert(rectsOverlap({x:0,y:0,w:10,h:10}, {x:10,y:0,w:2,h:2}) === false, 'Borda encostando não é colisão');
-          console.assert(typeof GROUND_Y() === 'number', 'GROUND_Y deve ser numérico');
-          console.assert(SPRITE_COLS >= 1, 'SPRITE_COLS >= 1');
-          console.log('%cTestes básicos passaram', 'color:#22d3ee');
+          console.assert(rectsOverlap({x:0,y:0,w:10,h:10},{x:5,y:5,w:2,h:2})===true,'Colisão 1');
+          console.assert(rectsOverlap({x:0,y:0,w:10,h:10},{x:10,y:0,w:2,h:2})===false,'Colisão 2');
+          console.assert(typeof GROUND_Y()==='number','GROUND_Y numérico');
         } catch (err) {
-          console.error('Falha nos testes básicos:', err); showOverlayError('Falha nos testes básicos: ' + (err && err.message ? err.message : err));
+          console.error('Falha nos testes:', err); showOverlayError('Falha nos testes: ' + (err?.message || err));
         }
       })();
     })();
