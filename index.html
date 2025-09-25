@@ -260,9 +260,9 @@
 
       // HUD do inventário (cosméticos)
       const invX=10, invY=h-28; ctx.font='12px system-ui'; ctx.textBaseline='middle'; let ix=invX;
-      if(inventory.garrafa){ ctx.fillStyle='#8b5cf6'; roundRect(ctx, ix, invY, 18, 18, 4); ctx.fillStyle:'#0e0a1f'; ctx.fillText('🍺', ix+4, invY+10); ix+=24; }
-      if(inventory.latinhas>0){ ctx.fillStyle='#34d399'; roundRect(ctx, ix, invY, 18, 18, 4); ctx.fillStyle:'#0e0a1f'; ctx.fillText('🥫x'+inventory.latinhas, ix+22, invY+10); ix+=64; }
-      if(inventory.docinhos>0){ ctx.fillStyle='#f472b6'; roundRect(ctx, ix, invY, 18, 18, 4); ctx.fillStyle:'#0e0a1f'; ctx.fillText('🍬x'+inventory.docinhos, ix+22, invY+10); }
+      if(inventory.garrafa){ ctx.fillStyle='#8b5cf6'; roundRect(ctx, ix, invY, 18, 18, 4); ctx.fillStyle:'#0e0a1f'; ctx.fillText('Cerveja', ix+4, invY+10); ix+=24; }
+      if(inventory.latinhas>0){ ctx.fillStyle='#34d399'; roundRect(ctx, ix, invY, 18, 18, 4); ctx.fillStyle:'#0e0a1f'; ctx.fillText('Refri'+inventory.latinhas, ix+22, invY+10); ix+=64; }
+      if(inventory.docinhos>0){ ctx.fillStyle='#f472b6'; roundRect(ctx, ix, invY, 18, 18, 4); ctx.fillStyle:'#0e0a1f'; ctx.fillText('Doces'+inventory.docinhos, ix+22, invY+10); }
     }
 
     function roundRect(ctx,x,y,w,h,r){ r=Math.min(r,w/2,h/2); ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.fill(); }
